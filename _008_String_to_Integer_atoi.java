@@ -1,56 +1,42 @@
 public class Solution {
     public int myAtoi(String str) {
-        if(str.length() == 0){
-            return 0;
-        }
+        if(str == null) return 0;
+        str = str.trim();
+        if(str.length() == 0) return 0;
 
-        int ret = 0;
+        boolean negtive = false;
         int index = 0;
-        boolean negative = false;
-
-        while(index < str.length() && str.charAt(index) == ' '){
-            index++;
-        }
-
-        if(str.charAt(index) == '-' || str.charAt(index) == '+'){
-            negative = str.charAt(index) == '-' ? true : false;
+        char[] s = str.toCharArray();
+        if(s[index] < '0' || s[index] > '9'){
+            if(s[index] == '-'){
+                negtive = true;
+            }else if(s[index] == '+'){
+                negtive = false;
+            }else{
+                return 0;
+            }
             index ++;
         }
-        while(index < str.length() && str.charAt(index) == '0'){
-            index++;
+        long res = 0;
+        while(index < s.length && s[index] <= '9' && s[index] >= '0'){
+            res *= 10;
+            res += s[index] - '0';
+            if( (res -1 )> Integer.MAX_VALUE){
+                break;
+            }
+            index ++;
         }
-
-        for(; index < str.length(); index++){
-            if(str.charAt(index) - '0' < 0 || str.charAt(index) - '0' > 9){
-                return ret;
-            }
-
-
-            if( (ret > 0) && (ret > Integer.MAX_VALUE / 10)){
-                return Integer.MAX_VALUE;
-            }
-            if( (ret < 0) && (ret < Integer.MIN_VALUE / 10)){
+        if(negtive){
+            res = -res;
+            if(res < Integer.MIN_VALUE){
                 return Integer.MIN_VALUE;
             }
-            ret *= 10;
-
-            if( (ret > 0) && (Integer.MAX_VALUE - ret) < (str.charAt(index) - '0')){
+            return (int)res;
+        }else{
+            if(res > Integer.MAX_VALUE){
                 return Integer.MAX_VALUE;
             }
-            if( (ret < 0) && (ret - Integer.MIN_VALUE) < (str.charAt(index) - '0')){
-                return Integer.MIN_VALUE;
-            }
-            if(ret >= 0){
-                ret += str.charAt(index) - '0';
-            }else{
-                ret -= str.charAt(index) - '0';
-            }
-
-            if(negative == true && str.charAt(index) != '0'){
-                ret = -ret;
-                negative = false;
-            }
+            return (int)res;
         }
-        return ret;
     }
 }
