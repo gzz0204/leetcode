@@ -1,41 +1,31 @@
 public class Solution {
     public String longestPalindrome(String s) {
-        if(s.length() <= 1){
-            return s;
-        }
+        if(s == null) return null;
+        if(s.length() <= 1) return s;
+        char[] str = s.toCharArray();
         int start = 0;
         int end = 0;
-        for(int mid = 0; mid < s.length(); mid++){
-            int left;
-            int right;
+        for(int i = 0; i < str.length; i++){
+            // i-1, i, i+1, i+2
+            int expand = 0;
+            while((i-expand) >= 0 && (i+1+expand) < str.length && str[i-expand] == str[i+1+expand]){
+                if((expand + expand + 2) > (end - start + 1)){
+                    start = i - expand;
+                    end = i + 1 + expand;
+                }
+                expand ++;
+            }
 
-            // cases like aba
-            left = mid - 1;
-            right = mid + 1;
-            while(left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)){
-                left--;
-                right++;
-            }
-            left ++;
-            right --;
-            if(right - left > end - start){
-                start = left;
-                end = right;
-            }
-            // cases like abba
-            left = mid;
-            right = mid + 1;
-            while(left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)){
-                left--;
-                right++;
-            }
-            left ++;
-            right --;
-            if(right - left > end - start){
-                start = left;
-                end = right;
+            // i-1, i, i+1
+            expand = 1;
+            while( i-expand >= 0 && i+expand < str.length && str[i-expand] == str[i+expand]){
+                if(1+expand+expand > (end-start+1)){
+                    end = i+expand;
+                    start = i-expand;
+                }
+                expand ++;
             }
         }
-        return s.substring(start, end + 1);
+        return new String(Arrays.copyOfRange(str, start,end+1));
     }
 }
