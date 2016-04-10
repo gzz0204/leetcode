@@ -1,6 +1,3 @@
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Comparator;
 /**
  * Definition for singly-linked list.
  * public class ListNode {
@@ -10,69 +7,39 @@ import java.util.Comparator;
  * }
  */
 public class Solution {
-    public ListNode mergeKLists(ListNode[] lists) {
-        if(lists.length == 0){
-            return null;
+    public class QueueNode implements Comparable<QueueNode>{
+        public Integer val;
+        public Integer position;
+        public QueueNode(int v, int p){
+            this.val = v;
+            this.position = p;
         }
-        int count = 0;
-        Comparator<QueueElement> comp = new Comparator<QueueElement>(){
-            public int compare(QueueElement e1, QueueElement e2){
-                if(e1.getVal() < e2.getVal()){
-                    return -1;
-                }else if(e1.getVal() == e2.getVal()){
-                    return 0;
-                }else{
-                    return 1;
-                }
-            }
-        };
-        PriorityQueue<QueueElement> q = new PriorityQueue<>(11, comp);
+        public int compareTo(QueueNode other){
+            return this.val.compareTo(other.val);
+        }
+    }
+    public ListNode mergeKLists(ListNode[] lists) {
+        ListNode dummy = new ListNode(0);
+        ListNode tail = dummy;
+        PriorityQueue<QueueNode> queue = new PriorityQueue<>();
         for(int i = 0; i < lists.length; i++){
             if(lists[i] != null){
-                QueueElement e = new QueueElement(lists[i].val, i);
-                q.add(e);
-                count++;
+                queue.add(new QueueNode(lists[i].val, i));
                 lists[i] = lists[i].next;
             }
         }
-        if(count == 0){
-            return null;
-        }
-        ListNode head = null;
-        ListNode tail = null;
-        while(!q.isEmpty()){
-            QueueElement e = q.poll();
-            int val = e.getVal();
-            int pos = e.getPos();
-            ListNode newNode = new ListNode(val);
-            newNode.next = null;
-            if(head == null){
-                head = newNode;
-                tail = newNode;
-            }else{
-                tail.next = newNode;
-                tail = tail.next;
-            }
+        while(!queue.isEmpty()){
+            QueueNode minNode = queue.poll();
+            int pos = minNode.position;
+            int val = minNode.val;
             if(lists[pos] != null){
-                q.add(new QueueElement(lists[pos].val, pos));
+                queue.add(new QueueNode(lists[pos].val, pos));
                 lists[pos] = lists[pos].next;
             }
+            ListNode newNode = new ListNode(val);
+            tail.next = newNode;
+            tail = tail.next;
         }
-        return head;
-    }
-
-    public class QueueElement{
-        int val;
-        int pos;
-        public int getVal(){
-            return this.val;
-        }
-        public int getPos(){
-            return this.pos;
-        }
-        public QueueElement(int val, int pos){
-            this.val = val;
-            this.pos = pos;
-        }
+        return dummy.next;
     }
 }
