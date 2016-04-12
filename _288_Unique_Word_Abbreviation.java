@@ -1,35 +1,64 @@
 public class ValidWordAbbr {
-    private HashMap<String, HashSet<String>> map;
+    private HashMap<String, String> map;
 
     public ValidWordAbbr(String[] dictionary) {
-        map = new HashMap<String, HashSet<String>>();
+        map = new HashMap<String, String>();
         if(dictionary == null || dictionary.length == 0 ){
             return;
         }
-        Arrays.sort(dictionary);
         for(String str : dictionary){
-            // not equals to prev
             String abbrev = shorten(str);
-            if(map.get(abbrev) == null){
-                HashSet<String> set = new HashSet<>();
-                set.add(str);
-                map.put(abbrev, set);
+            if(!map.containsKey(abbrev)){
+                map.put(abbrev, str);
             }else{
-                map.get(abbrev).add(str);
+                if(map.get(abbrev) != null && !map.get(abbrev).equals(str)){
+                    map.put(abbrev,null);
+                }
             }
         }
     }
 
     public boolean isUnique(String word) {
         String abbrev = shorten(word);
-        if(map.get(abbrev) == null){
+        if(!map.containsKey(abbrev)){
             return true;
         }
-        if(map.get(abbrev).size() > 1){
+        if(map.get(abbrev) == null){
             return false;
         }
-        return map.get(abbrev).contains(word);
+        return map.get(abbrev).equals(word);
     }
+
+
+    // private HashMap<String, HashSet<String>> map;
+
+    // public ValidWordAbbr(String[] dictionary) {
+    //     map = new HashMap<String, HashSet<String>>();
+    //     if(dictionary == null || dictionary.length == 0 ){
+    //         return;
+    //     }
+    //     for(String str : dictionary){
+    //         String abbrev = shorten(str);
+    //         if(map.get(abbrev) == null){
+    //             HashSet<String> set = new HashSet<>();
+    //             set.add(str);
+    //             map.put(abbrev, set);
+    //         }else{
+    //             map.get(abbrev).add(str);
+    //         }
+    //     }
+    // }
+
+    // public boolean isUnique(String word) {
+    //     String abbrev = shorten(word);
+    //     if(map.get(abbrev) == null){
+    //         return true;
+    //     }
+    //     if(map.get(abbrev).size() > 1){
+    //         return false;
+    //     }
+    //     return map.get(abbrev).contains(word);
+    // }
 
     public String shorten(String word){
         if(word.length() <= 2){
